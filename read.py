@@ -97,8 +97,14 @@ for i in range(goods_file.__len__()):
     print(i)
 for i in target_Item:
     if is_in(i,target_Double_Text,1):
-        target_Double_Item[i]=1
+        target_Double_Item[i]=target_Item[i]
+
+
 print(target_Item)
 print(target_Double_Item)
 print(target_Count)
 print(target_Double_Count)
+print(target_Item.__len__())
+for i in target_Double_Item:
+    target_Item.pop(i,None)
+print(target_Item.__len__())
