@@ -12,6 +12,8 @@ target_Double_Text=["贈","送","充電","散熱膏"]
 target_Double_Count={"贈":0,"送":0,"充電":0,"散熱膏":0}
 target_Item = {}
 target_Double_Item={}
+Outtarget_Item=[]
+isGPUPos =[]
 
 # 放分割好的單字(不分商品)
 def is_in(full_str, sub_str,double=0):
@@ -20,7 +22,7 @@ def is_in(full_str, sub_str,double=0):
             for i in range(len(sub_str)):
                 if sub_str[i] in full_str:
                     target_Count[sub_str[i]]+=1
-                    return True
+                    return True                    
         else:
             for i in range(len(sub_str)):
                 if sub_str[i] in full_str:
@@ -28,9 +30,20 @@ def is_in(full_str, sub_str,double=0):
                     return True
     except ValueError:
         return False
+
+def roll(arr, len, time):
+    arr=[]
+    for i in range(time):
+        arr.append(random.randint(0,len))
+
+    
+  
+
 for i in range(10):
     goods = open('goods/'+goods_file[i], 'r',encoding="utf-8")
     data = pd.DataFrame(goods)
+    
+    #print(randomlist) 
     for j in range(data.__len__()):
         good = json.loads(data[0][j])
         good['item_name'] = good['item_name'].replace('"','')
@@ -85,13 +98,33 @@ for i in range(10):
         good['item_name'] = good['item_name'].replace("＋","")
         good['item_name'] = good['item_name'].replace("+","")
         check =  is_in(good['item_name'],target_Text)
+        
         if check:
+            isGPUPos.append(j)
             target_Item[good['item_name']]=[]
             target_Item[good['item_name']].append(good['category_name'])
             target_Item[good['item_name']].append(good['price'])
 
+
+    randomlist =[]
+    #isGPUPos1 = isGPUPos.sort(reversed = True)
+    roll(randomlist,data.__len__,34)
+    for a in randomlist:
+        for b in isGPUPos:
+            if a == b:
+                roll(randomlist,data.__len__,34)
+          
+    for c in range(randomlist):
+        good=json.loads(data[0][c])
+        Outtarget_Item[good['item_name']]=[]
+        Outtarget_Item[good['item_name']].append(good['category_name'])
+        Outtarget_Item[good['item_name']].append(good['price'])
+
+
+print(Outtarget_Item[0:100])
+                
             
-    print(i)
+#print(Outtarget_Item)
 for i in target_Item:
     if is_in(i,target_Double_Text,1):
         target_Double_Item[i]=target_Item[i]
@@ -107,12 +140,14 @@ for i in target_Double_Item:
 category_names=[]
 prices=[]
 names=[]
-# print(target_Item.__len__())
+#print(target_Item.__len__())
+
 for i in target_Item:
     category_names.append(target_Item[i][0])
     prices.append(target_Item[i][1])
     names.append(i)
+
 dk = pd.DataFrame({"names":names,"category_names":category_names,"prices":prices})
 dk['isCorrect'] = 1
-print(dk)
+#print(dk)
 dk.to_csv('isCorrect.csv',sep='\t',encoding='utf-8')

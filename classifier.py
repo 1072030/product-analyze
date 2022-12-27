@@ -10,7 +10,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 goods_path = os.path.dirname(os.path.realpath(__file__))
 
-train_data = pd.read_csv(goods_path+'isCorrect.csv')
+train_data = pd.read_csv(goods_path+'isCorrect.xlsx')
 test_data = pd.read_csv('../input/bigdata/test.csv')
 
 train_data.isnull().sum() #checking for Null values
