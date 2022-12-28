@@ -27,7 +27,7 @@ target_Item = []
 # 放分割好的單字(不分商品)
 target_Split = []
 # 放分割好的單字(分商品)
-target_Split_Item = []
+target_Split_Item = {}
 # 放所有包含"顯示卡","GPU"的category's rows
 target_category = []
 target_category_total = []
@@ -46,9 +46,37 @@ for i in all_file_name:
                 target_category.append(temp[0])
                 target_Price.append(temp[3])
                 
-print(target_Item)
-print(target_category)
-print(target_Price)
+
+for i in range(len(target_Item)):
+    # 以:分割
+    tempTar = target_Item[i].split(":")
+    tempCat = target_category[i].split(":")
+    tempPri = target_Price[i].split(":")
+    tempTar.pop(0)
+    tempCat.pop(0)
+    tempPri.pop(0)
+    target_Item[i] = tempTar
+    target_category[i] = tempCat
+    target_Price[i] = tempPri
+    
+for j in range(len(target_Item)):
+    a = str(target_Item[j]).split(" ")
+    
+    target_Split_Item[j]=a
+
+
+print(a)
+
+# print(target_Item)
+# print(target_Item.__len__())
+print(target_Split_Item)
+print(target_Split_Item.__len__())
+
+# print(target_Price)
+# print(target_Item.__len__())
+# print(target_category.__len__())
+# print(target_Price.__len__())
+
 
 
 
