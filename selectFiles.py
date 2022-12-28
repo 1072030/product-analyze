@@ -59,16 +59,16 @@ for i in range(len(target_Item)):
     target_category[i] = tempCat
     target_Price[i] = tempPri
 
-replace_Txt = '"\'\\/[]{}｛｝【】()（）@'
+replace_Txt = '"\'\\/[]{}｛｝【】()（）@!"#$%&\'()*+-./:;<=>?@[\\]^_`~【】◎'
 
 for j in range(len(target_Item)):
     a = str(target_Item[j]).split(" ")
     b = ' '.join(a)
     for textlen in b:
-        b.replace('','')
+        b.maketrans(replace_Txt,'')
+    b.split(' ')
     for z in b:
-        
-    target_Split_Item[j]=a
+        target_Split_Item[j]=a
 
 
 print(a)
