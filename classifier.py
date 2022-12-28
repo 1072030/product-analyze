@@ -10,14 +10,15 @@ from sklearn.tree import DecisionTreeClassifier
 
 goods_path = os.path.dirname(os.path.realpath(__file__))
 
-# error_bad_lines=False
-train_data = pd.read_csv(goods_path+'\\train_Data.csv', 'r', encoding="utf-8", error_bad_lines=False)
-test_data = pd.read_csv(goods_path+'\\isCorrect.csv', 'r', encoding="utf-8", error_bad_lines=False)
+# , 'r', encoding="utf-8", error_bad_lines=False
+train_data = pd.read_csv(r"C:\\Users\\jack\Desktop\\code\bigData\2\\product-analyze\\train_Data.csv")
+test_data = pd.read_csv(r"C:\\Users\\jack\Desktop\\code\bigData\2\\product-analyze\\isCorrect.csv")
 
-train_data.isnull().sum() #checking for Null values
-
+print(train_data.shape)
+print(test_data.shape)
 #checking:
 print(train_data.head())
+print(test_data.head())
 
 #Spliting train data into X (features) and y (answear):
 y = train_data['D']
@@ -34,6 +35,6 @@ train_data.head()
 preds = model.predict(test_data).astype(int)
 
 # Saving the result into submission file
-submission = pd.read_csv('../input/bigdata/result.csv')
+submission = pd.read_csv(goods_path+'\\isCorrect.csv', 'r', encoding="utf-8", error_bad_lines=False)
 submission["isCorrect"] = preds
 submission.to_csv('result.csv', index=False) # Competition rules require that no index number be saved

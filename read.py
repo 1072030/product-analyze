@@ -46,6 +46,7 @@ for i in range(10):
     #print(randomlist) 
     for j in range(data.__len__()):
         good = json.loads(data[0][j])
+        print(good)
         good['item_name'] = good['item_name'].replace('"','')
         good['item_name'] = good['item_name'].replace("'","")
         good['item_name'] = good['item_name'].replace(' ','')
