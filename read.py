@@ -165,36 +165,41 @@ with open("word.json", 'r',encoding="utf-8") as jsonfile:
     jieba.analyse.set_stop_words("unSupport.txt")
     tags = jieba.analyse.extract_tags(all_word,withWeight=True,topK=20) #TF-IDF權重
     # print(tags)
-#-----------------------------------------------start training
+#-----------------------------------------------start testing
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.metrics import accuracy_score
-from scipy.sparse import coo_matrix
-# from xgboost import XGBClassifier
+#將需要去除的資料填入
 stoplist = list(pd.read_table("unSupport.txt",names=["w"],sep='aaa',encoding="utf-8",engine="python").w)
+#此function將文字處理成tifd需要的dataset
 def m_cut(txt):
     return [w for w in jieba.lcut(txt) if w not in stoplist and len(w)>1]
+#將我們剛剛過濾的文字filter輸入
 with open('train.json','r',encoding="utf8") as trainset:
     trainSet = json.load(trainset)
-    # print(trainSet)
+    # 處理成一整個字串
     trainData=""
     for i in range(trainSet.__len__()):
         trainData+=trainSet[i]
         trainData+=","
-    # print(trainData)
+    # 處理成tifd dataSet
     txt_list=[" ".join(m_cut(trainData))]
-    # print(txt_list)
+    # 進行計算function宣告
     vectorizer = CountVectorizer()
+    # 將文本的詞語 轉成 稀疏矩陣
     X = vectorizer.fit_transform(txt_list)
+    # 宣告tfid
     transformer = TfidfTransformer()
+    # 基於稀疏矩陣進行TF-IDF計算
     tfidf = transformer.fit_transform(X)
+    # 獲得所有詞語
     word=vectorizer.get_feature_names_out()
+    # 將tfid轉為陣列 用於表示權重
     weight=tfidf.toarray()
     data_dict={}
     for i in range(len(weight)):
         for j in range(len(word)):
             data_dict[word[j]]=weight[i,j]
     print(sorted(data_dict.items(),key=lambda x:x[1],reverse=True)[:10])
-    # print(weight[:10])
+    # print(word)
 
 
