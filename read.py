@@ -35,7 +35,7 @@ def is_in(full_str, sub_str,double=0):
     except ValueError:
         return False
 # goods_file.__len__()
-for i in range(0):
+for i in range(goods_file.__len__()):
     goods = open('goods/'+goods_file[i], 'r',encoding="utf-8")
     data = pd.DataFrame(goods)
     for j in range(data.__len__()):
@@ -109,11 +109,11 @@ for i in target_Double_Item:
 
 words={"word":[]}
 print("saving as json file : word.json")
-# for i in target_Item:
-#     words["word"].append(i)
-# json_words = json.dumps(words,indent=4,ensure_ascii=False)
-# with open("word.json","w",encoding="utf8") as outfile:
-#     outfile.write(json_words)
+for i in target_Item:
+    words["word"].append(i)
+json_words = json.dumps(words,indent=4,ensure_ascii=False)
+with open("word.json","w",encoding="utf8") as outfile:
+    outfile.write(json_words)
 category_names=[]
 prices=[]
 names=[]
@@ -129,21 +129,10 @@ dk['isCorrect'] = 1
 print(dk)
 dk.to_csv('isCorrect.csv',sep='\t',encoding='utf-8')
 
-
-
 with open("word.json", 'r',encoding="utf-8") as jsonfile:
     data_json = json.load(jsonfile)
     all_word=""
     symbol = ","
-
-    #設定testing set
-    # test_json = json.dumps(data["word"][:1000],indent=4,ensure_ascii=False)
-    # with open("test.json",'w',encoding="utf8") as test:
-    #     test.write(test_json)
-
-    # # 原data刪除testing data
-    # del data["word"][:1000]
-
     #新增traing set
     train_json = json.dumps(data_json["word"],indent=4,ensure_ascii=False)
     with open("train.json",'w',encoding="utf8") as test:
@@ -151,15 +140,6 @@ with open("word.json", 'r',encoding="utf-8") as jsonfile:
         data['isCorrect']=1
         # print(data)
         test.write(train_json)
-    temp = pd.read_csv('./data/train_Data.csv')
-    temp2 = pd.read_csv('./data/test_data.csv')
-    temp = pd.DataFrame(temp)
-    temp2 = pd.DataFrame(temp2)
-    train_csv_rebuild = temp.drop(['B','C'],axis=1)
-    test_csv_rebuild = temp2.drop(['B','C'],axis=1)
-    train_csv_rebuild.to_csv('tfid_trainingSet.csv',sep='\t',encoding='utf-8')
-    test_csv_rebuild.to_csv('tfid_testingSet.csv',sep='\t',encoding='utf-8')
-    
     all_word=symbol.join(data["word"])
     print("jieba calculating~!")
     jieba.analyse.set_stop_words("unSupport.txt")
