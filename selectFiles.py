@@ -30,12 +30,16 @@ target_Split = []
 target_Split_Item = []
 # 放所有包含"顯示卡","GPU"的category's rows
 target_category = []
-target_category_total = []
 # 放所有包含"顯示卡","GPU"的price's rows
 target_Price = []
-target_Price_total = []
 # 分數欄位
 score = []
+score1 = []
+# 非GPU
+other_Item = []
+other_Category = []
+other_Price = []
+other_Split_Item = []
 
 # punct = '!"#$%&\'()*+-./:;<=>?@[\\]^_`{}~【】◎'   # `|` is not present here
 # transtab = str.maketrans(dict.fromkeys(punct, ''))
@@ -53,21 +57,43 @@ for i in all_file_name:
                 target_Item.append(temp[4])
                 target_category.append(temp[0])
                 target_Price.append(temp[3])
+            else:    
+                if(len(other_Item)<6686):
+                    temp1 = i.split(",")
+                    other_Item.append(temp1[4])
+                    other_Category.append(temp1[0])
+                    other_Price.append(temp1[3])
+                
                 
 
 for i in range(len(target_Item)):
     # 以:分割
+    # GPU
     tempTar = target_Item[i].split(":")
     tempCat = target_category[i].split(":")
     tempPri = target_Price[i].split(":")
+    # not GPU
+    tempOI = other_Item[i].split(":")
+    tempOC = other_Category[i].split(":")
+    tempOP = other_Price[i].split(":")
+    # GPU
     tempTar.pop(0)
     tempCat.pop(0)
     tempPri.pop(0)
+    # not GPU
+    tempOI.pop(0)
+    tempOC.pop(0)
+    tempOP.pop(0)
+    # GPU
     target_Item[i] = tempTar
     target_category[i] = tempCat
     target_Price[i] = tempPri
+    # not GPU
+    other_Item[i] = tempOI
+    other_Category[i] = tempOC
+    other_Price[i] = tempOP
 
-# 處理價格和種類文字
+# GPU處理價格和種類文字
 for k in range(len(target_Price)):
     a = ' '.join(target_Price[k])
     #print(a)
@@ -80,9 +106,20 @@ for k in range(len(target_Price)):
     aa = aa.translate(transtab)
     target_category[k] = aa
     #print(target_category[k])
+    
+    b = ' '.join(other_Price[k])
+    #print(a)
+    b = b.translate(transtab)
+    other_Price[k] = b
+    
+    bb = ' '.join(other_Category[k])
+    #print(aa)
+    bb = bb.translate(transtab)
+    other_Category[k] = bb
+    
 
 
-# 將整個單字依照商品區分
+# GPU將整個單字依照商品區分
 for j in range(len(target_Item)):
     a = str(target_Item[j]).split(" ")
     b = ' '.join(a)
@@ -93,22 +130,44 @@ for j in range(len(target_Item)):
     target_Split_Item.append(c)
     # 不依照商品類別區分
     target_Split.extend(c)
+    
+    aa = str(other_Item[j]).split(" ")
+    bb = ' '.join(aa)
+    bb = bb.translate(transtab)
+    cc = bb.split(' ')
+    while '' in cc:
+        cc.remove('')
+    other_Split_Item.append(cc)
+    
+print(target_Split)
 
 # 分商品的總長度
 for totallen in range(len(target_Split_Item)):
     count = 0
+    count1 = 0
     # 氛商品中元素長度
     for itemlen in range(len(target_Split_Item[totallen])):
         # 不分商品的總長度
         for alllen in target_Split:
             if target_Split_Item[totallen][itemlen] == alllen:
                 count+=1
+    for otheritemlen in range(len(other_Split_Item[totallen])):
+        for alllen in target_Split:
+            if other_Split_Item[totallen][otheritemlen] == alllen:
+                count1+=1
+    
+                       
     
     score.append(count)
+    score1.append(count1)
 
 dk = pd.DataFrame({"score":score,"category_names":target_category,"prices":target_Price})
 dk["isCorrect"] = 1
 dk.to_csv('newDataGPU.csv',sep='\t',encoding='utf-8')
+
+dk1 = pd.DataFrame({"score":score1,"category_names":other_Category,"prices":other_Price})
+dk1["isCorrect"] = 0
+dk1.to_csv('newDataNotGPU.csv',sep='\t',encoding='utf-8')
 # print(target_Item)
 # print(target_Item.__len__())
 print(len(score))
