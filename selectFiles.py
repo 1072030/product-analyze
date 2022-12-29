@@ -27,13 +27,21 @@ target_Item = []
 # 放分割好的單字(不分商品)
 target_Split = []
 # 放分割好的單字(分商品)
-target_Split_Item = {}
+target_Split_Item = []
 # 放所有包含"顯示卡","GPU"的category's rows
 target_category = []
 target_category_total = []
 # 放所有包含"顯示卡","GPU"的price's rows
 target_Price = []
 target_Price_total = []
+# 分數欄位
+score = []
+
+# punct = '!"#$%&\'()*+-./:;<=>?@[\\]^_`{}~【】◎'   # `|` is not present here
+# transtab = str.maketrans(dict.fromkeys(punct, ''))
+# data['item_name'] = data['item_name'].str.lower().str.translate(transtab)
+replace_Txt = '"\'\\/[]{}｛｝【】()（）@!"#$%&\'()*+-./:;<=>?@[\\]^_`~【】◎『』'
+transtab = str.maketrans(dict.fromkeys(replace_Txt, ''))
 
 # 將所有取到的value放入target_Item
 for i in all_file_name:
@@ -59,24 +67,51 @@ for i in range(len(target_Item)):
     target_category[i] = tempCat
     target_Price[i] = tempPri
 
-replace_Txt = '"\'\\/[]{}｛｝【】()（）@!"#$%&\'()*+-./:;<=>?@[\\]^_`~【】◎'
+# 處理價格和種類文字
+for k in range(len(target_Price)):
+    a = ' '.join(target_Price[k])
+    #print(a)
+    a = a.translate(transtab)
+    target_Price[k] = a
+    #print(target_Price[k])
+    
+    aa = ' '.join(target_category[k])
+    #print(aa)
+    aa = aa.translate(transtab)
+    target_category[k] = aa
+    #print(target_category[k])
 
+
+# 將整個單字依照商品區分
 for j in range(len(target_Item)):
     a = str(target_Item[j]).split(" ")
     b = ' '.join(a)
-    for textlen in b:
-        b.maketrans(replace_Txt,'')
-    b.split(' ')
-    for z in b:
-        target_Split_Item[j]=a
+    b = b.translate(transtab)
+    c = b.split(' ')
+    while '' in c:
+        c.remove('')
+    target_Split_Item.append(c)
+    # 不依照商品類別區分
+    target_Split.extend(c)
 
+# 分商品的總長度
+for totallen in range(len(target_Split_Item)):
+    count = 0
+    # 氛商品中元素長度
+    for itemlen in range(len(target_Split_Item[totallen])):
+        # 不分商品的總長度
+        for alllen in target_Split:
+            if target_Split_Item[totallen][itemlen] == alllen:
+                count+=1
+    
+    score.append(count)
 
-print(a)
-
+dk = pd.DataFrame({"score":score,"category_names":target_category,"prices":target_Price})
+dk["isCorrect"] = 1
+dk.to_csv('newDataGPU.csv',sep='\t',encoding='utf-8')
 # print(target_Item)
 # print(target_Item.__len__())
-print(target_Split_Item)
-print(target_Split_Item.__len__())
+print(len(score))
 
 # print(target_Price)
 # print(target_Item.__len__())
