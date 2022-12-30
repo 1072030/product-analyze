@@ -6,14 +6,16 @@ import random
 import jieba
 import jieba.analyse
 import jieba.posseg as pseg  #使用pseq進行詞性標記
-jieba.enable_parallel()
+# jieba.enable_parallel()
 jieba.case_sensitive = True
+# jieba.load_userdict('dataDict.txt')
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 goods_file = os.listdir(dir_path+"/goods")
 # print(goods_file)
 target_Text = ["PCI顯示卡","顯示卡","GPU","影片配接器","圖形卡","繪圖卡"]
 target_Count = {"PCI顯示卡":0,"顯示卡":0,"GPU":0,"影片配接器":0,"圖形卡":0,"繪圖卡":0}
+
 target_Double_Text=["贈","送","充電","散熱膏"]
 target_Double_Count={"贈":0,"送":0,"充電":0,"散熱膏":0}
 target_Item = {}
@@ -91,22 +93,20 @@ for i in range(goods_file.__len__()):
         good['item_name'] = good['item_name'].replace("$","")
         good['item_name'] = good['item_name'].replace("＋","")
         good['item_name'] = good['item_name'].replace("+","")
-        # print("|".join(jieba.cut(good['item_name'],cut_all=True,HMM=True)))
         check =  is_in(good['item_name'],target_Text)
         if check:
             target_Item[good['item_name']]=[]
             target_Item[good['item_name']].append(good['category_name'])
             target_Item[good['item_name']].append(good['price'])
-
-            
     print(i)
+
+
 for i in target_Item:
     if is_in(i,target_Double_Text,1):
         target_Double_Item[i]=target_Item[i]
 
 for i in target_Double_Item:
     target_Item.pop(i,None)
-
 words={"word":[]}
 print("saving as json file : word.json")
 for i in target_Item:
@@ -148,6 +148,7 @@ with open("word.json", 'r',encoding="utf-8") as jsonfile:
 #-----------------------------------------------start testing
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+import pprint
 #將需要去除的資料填入
 stoplist = list(pd.read_table("unSupport.txt",names=["w"],sep='aaa',encoding="utf-8",engine="python").w)
 #此function將文字處理成tifd需要的dataset
@@ -179,7 +180,10 @@ with open('train.json','r',encoding="utf8") as trainset:
     for i in range(len(weight)):
         for j in range(len(word)):
             data_dict[word[j]]=weight[i,j]
-    print(sorted(data_dict.items(),key=lambda x:x[1],reverse=True)[:10])
-    # print(word)
+    x = sorted(data_dict.items(),key=lambda x:x[1],reverse=True)[:10]
+    for i in x:
+        print(i)
+    print("實際分詞數量:",word.shape)
+    print(X)
 
 
